@@ -5,10 +5,10 @@
 ## Usage
 ##########################
 usage() {
-  echo "Usage: `input_name $0` `output_name $0` on/off `onoff` `file_name $0`"
-  echo "Creates rRNA.interval_list with GTF file and UCSC database or genome.fa"
+  echo "Usage: $0 input_name $0 output_name  on/off genome"
+  echo "Creates rRNA.interval_list with GTF file plus UCSC database or genome.fa"
   echo ""
-  echo "example: genes.gtf rRNA.interval_list protein_coding noncoding.gtf"
+  echo "example: genes.gtf rRNA.interval_list on hg38"
   echo ""
   echo "   The expected inputs are:"
   echo "      arg1=input name"

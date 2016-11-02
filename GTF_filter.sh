@@ -5,7 +5,7 @@
 ## Usage
 ##########################
 usage() {
-  echo "Usage: `input_name $0` include/exclude `keyword` `output_name $0`"
+  echo "Usage: $0 input.gtf include/exclude keyword output.gtf"
   echo "Creates a new GTF file either excluding or including key words"
   echo ""
   echo "example: genes.gtf exclude protein_coding noncoding.gtf"
@@ -37,11 +37,13 @@ usage() {
   then
 	echo "filtering for $3"
 	awk <$1 '/'"$word"'/ {print}' > $4
+
 ##to exclude entries containing keyword given
   elif [ $io = "exclude" ]
   then
 	echo "filtering out $3"	
 	awk <$1 '!/'"$word"'/ {print}' > $4
+
 ##to filter gtf with a list of genes
   elif [ $io = "list" ]
   then
@@ -49,6 +51,7 @@ usage() {
                 {for (entry in list)
                 if ($0 ~ entry) 
                 print $1}' $3 $1 >$4
+
 ##feature not currently covered
   else
 	echo "third argument not include nor exclude"
