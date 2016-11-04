@@ -12,7 +12,7 @@ usage() {
   echo ""
   echo "   The expected inputs are:"
   echo "      arg1=input name"
-  echo "      arg2=include, exclude, or list (provided in arg3)"
+  echo "      arg2=include/exclude, or list/delist (provided in arg3)"
   echo "      arg3=keyword, can be part of feature name or type"
   echo "      arg4=output name"
   echo ""
@@ -30,6 +30,15 @@ usage() {
   	 output=$4
   	 io=$2
   	 word=$3
+##for list formats that are not plain text
+##for CSV tab-deliminated
+  name=$3
+  format="${name##*.}"
+  if [ $format = "csv" ]
+  then echo "coverting csv..."
+  awk <$3 -F "\t" '{print $1}' > /tmp/csv
+  word=/tmp/csv
+  fi
 
 ##simple filtering using awk
 ##to include entries containing keyword given
@@ -50,7 +59,18 @@ usage() {
  	awk -F, 'NR == FNR {list["\""$1"\""]; next}
                 {for (entry in list)
                 if ($0 ~ entry) 
-                print $1}' $3 $1 >$4
+                print $1}' $word $1 > $4
+
+##to filter out a list of genes
+  elif [ $io = "delist" ]
+  then
+ 	awk -F, 'NR == FNR {list["\""$1"\""]; next}
+                {
+		for (entry in list)
+                if ($0 ~ entry) 
+		$mark="\"true\""}
+                {print}' $word $1 > /tmp/log
+	awk -F, < /tmp/log '!/"true"/ {print}' > $4
 
 ##feature not currently covered
   else
