@@ -18,7 +18,7 @@ usage() {
   echo ""
   exit 2
 }
-
+START=$(date +%s)
 ##checking for correct arguments
   if [ "$#" != "4" ]
   then
@@ -36,7 +36,7 @@ usage() {
   format="${name##*.}"
   if [ $format = "csv" ]
   then echo "coverting csv..."
-  awk <$3 -F "\t" '{print $1}' > /tmp/csv
+  awk <$3 -F "," '{print $1}' > /tmp/csv
   word=/tmp/csv
   fi
 
@@ -76,3 +76,7 @@ usage() {
   else
 	echo "third argument not include nor exclude"
   fi
+
+END=$(date +%s)
+DIFF=$((END - START))
+echo runtime $DIFF"s"
