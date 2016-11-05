@@ -38,6 +38,9 @@ START=$(date +%s)
   then echo "coverting csv..."
   awk <$3 -F "," '{print $1}' > /tmp/csv
   word=/tmp/csv
+  count=$(wc -l < /tmp/csv)
+  counter=1
+  echo $count "genes..."
   fi
 
 ##simple filtering using awk
@@ -56,27 +59,39 @@ START=$(date +%s)
 ##to filter gtf with a list of genes
   elif [ $io = "list" ]
   then
- 	awk -F, 'NR == FNR {list["\""$1"\""]; next}
+ 	if [ $count -lt 1 ]
+	then    
+		echo "in simple mode..."
+		awk -F, 'NR == FNR {list["\""$1"\""]; next}
                 {for (entry in list)
                 if ($0 ~ entry) 
                 print $1}' $word $1 > $4
+	else    
+		echo "in complex mode..."
+		while [ "$counter" -le "$count" ]
+		do
+			word=$(awk 'FNR=='"$counter"' {print}' /tmp/csv)
+  			counter=$((counter+1))
+			awk <$1 '/'\""$word"\"'/ {print}' >> $4
+		done
+	fi
 
 ##to filter out a list of genes
   elif [ $io = "delist" ]
   then
  	awk -F, 'NR == FNR {list["\""$1"\""]; next}
-                {
-		for (entry in list)
+                {for (entry in list)
                 if ($0 ~ entry) 
 		$mark="\"true\""}
                 {print}' $word $1 > /tmp/log
+	echo "almost done"
 	awk -F, < /tmp/log '!/"true"/ {print}' > $4
 
 ##feature not currently covered
   else
-	echo "third argument not include nor exclude"
+	echo "third argument not supported"
   fi
 
 END=$(date +%s)
 DIFF=$((END - START))
-echo runtime $DIFF"s"
+echo total runtime $DIFF"s"
