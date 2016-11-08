@@ -59,7 +59,11 @@ START=$(date +%s)
 ##to filter gtf with a list of genes
   elif [ $io = "list" ]
   then
+<<<<<<< HEAD
  	if [ $count -lt 10 ]
+=======
+ 	if [ $count -lt 1 ]
+>>>>>>> 97c4090f966088145a252a1e0b04f15d99886178
 	then    
 		echo "in simple mode..."
 		awk -F, 'NR == FNR {list["\""$1"\""]; next}
