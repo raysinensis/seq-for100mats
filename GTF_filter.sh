@@ -57,9 +57,9 @@ START=$(date +%s)
 	awk <$1 '!/'"$word"'/ {print}' > $4
 
 ##to filter gtf with a list of genes
+##in cases where genes with additional characters are not wanted, ie RN7SL1, but not RN7SL186, use: sh GTF_filter.sh genes.gtf include RN7SL1\" temp
   elif [ $io = "list" ]
   then
-<<<<<<< HEAD
  	if [ $count -lt 10 ]
 	then    
 		echo "in simple mode..."
@@ -87,6 +87,12 @@ START=$(date +%s)
                 {print}' $word $1 > /tmp/log
 	echo "almost done"
 	awk -F, < /tmp/log '!/"true"/ {print}' > $4
+
+##append list to gtf, can be combined with include function to move entries between gtf files
+##depending on downstream application, may require additional step: bedtools sort -i in.gtf > out.gtf
+  elif [ $io = "append" ]
+  then
+	awk < $word '{print}' >> $4
 
 ##feature not currently covered
   else
