@@ -1,5 +1,5 @@
 #!/bin/bash
-#simple couple lines using awk to filter GTF files to exclude or include genes/types of interest
+#for generating rRNA interval list required by RNA-SeQC
 
 ##########################
 ## Usage
