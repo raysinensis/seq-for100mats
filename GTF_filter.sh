@@ -12,12 +12,13 @@ usage() {
   echo ""
   echo "   The expected inputs are:"
   echo "      arg1=input name"
-  echo "      arg2=include/exclude, or list/delist (provided in arg3)"
+  echo "      arg2=include/exclude, or list/delist/append (provided in arg3)"
   echo "      arg3=keyword, can be part of feature name or type"
   echo "      arg4=output name"
   echo ""
   exit 2
 }
+
 START=$(date +%s)
 ##checking for correct arguments
   if [ "$#" != "4" ]
@@ -26,10 +27,12 @@ START=$(date +%s)
 	exit 1
   fi
 
+##logging arguments
   export input=$1
   	 output=$4
   	 io=$2
   	 word=$3
+
 ##for list formats that are not plain text
 ##for CSV tab-deliminated
   name=$3
@@ -57,7 +60,7 @@ START=$(date +%s)
 	awk <$1 '!/'"$word"'/ {print}' > $4
 
 ##to filter gtf with a list of genes
-##in cases where genes with additional characters are not wanted, ie RN7SL1, but not RN7SL186, use: sh GTF_filter.sh genes.gtf include RN7SL1\" temp
+##in cases where genes with additional characters are not wanted, e.g. RN7SL1, but not RN7SL186, use: sh GTF_filter.sh genes.gtf include RN7SL1\" temp
   elif [ $io = "list" ]
   then
  	if [ $count -lt 10 ]
@@ -85,7 +88,7 @@ START=$(date +%s)
                 if ($0 ~ entry) 
 		$mark="\"true\""}
                 {print}' $word $1 > /tmp/log
-	echo "almost done"
+	echo "outputting..."
 	awk -F, < /tmp/log '!/"true"/ {print}' > $4
 
 ##append list to gtf, can be combined with include function to move entries between gtf files
@@ -99,6 +102,7 @@ START=$(date +%s)
 	echo "third argument not supported"
   fi
 
+##calulating time lapsed
 END=$(date +%s)
 DIFF=$((END - START))
 echo total runtime $DIFF"s"
