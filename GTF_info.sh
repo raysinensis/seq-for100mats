@@ -1,5 +1,5 @@
 #!/bin/bash
-#extracting 5' and/or 3'UTR info from GTF annotations
+#extracting 5',3'UTR and splicing info from GTF annotations
 
 ##########################
 ## Usage
@@ -44,6 +44,11 @@ START=$(date +%s)
   awk </tmp/genelist -F '\"; ' '{print $1}' | uniq > plusgenes.txt
   awk <minusstrand.csv -F 'gene_name \"' '{print $2}' > /tmp/genelist
   awk </tmp/genelist -F '\"; ' '{print $1}' | uniq > minusgenes.txt
+
+##list of genes with multiple exons
+  awk <$input -F 'gene_name \"' '/'"exon_number \"2\""'/{print $2}' > /tmp/genelist
+  awk </tmp/genelist -F '\"; ' '{print $1}' | uniq > splicedgenes.txt
+
 ##calulating time lapsed
 END=$(date +%s)
 DIFF=$((END - START))
