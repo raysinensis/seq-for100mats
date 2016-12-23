@@ -8,6 +8,15 @@ Collected here are simple command lines and scripts related to my own work for c
 # GTF_filter
 For editing GTF files, used for RNAseq alignment. Gencode GTF files are recommended over UCSC ones for noncoding RNA annotations. Depending on specific needs, customized GTF may be required, hence this utility to select or filter out entries.
 
+# GTF_info
+Further separation of subgroups, such as UTRs, or first/final exons. Currently required for the UTR python scripts.
+
+# UTR.py
+Generating two GTF files, with either 5'UTR or 3'UTR annotations.
+
+# UTRexon.py
+Similar to the previous, but exons (including those that span the start or stop codons).
+
 # mk_rRNA_interval
 RNA-SeQC requires rRNA interval file for quality control analysis. The file, not readily available from iGenome download packages, can be generated directly from GTF annotations. The interval file from human GRch38 is also uploaded.
 
