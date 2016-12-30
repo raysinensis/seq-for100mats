@@ -1,5 +1,6 @@
 #!/bin/bash
 #converting a list of target genes as DEseq2 generated csv file into RNK file the GSEA software requires
+export LC_ALL=C
 
 usage(){
 echo "Usage: input.csv"
@@ -22,5 +23,19 @@ genecol=1
 foldcol=3
 pvalcol=7
 
-awk -F "," <$1 '$'$foldcol'<0 {print $'$genecol' "\t" $'$foldcol'}' >/tmp/out
-sort -k2 /tmp/out >output.txt
+##parameters for edgeR, unhide if needed
+##genecol=1
+##foldcol=2
+##pvalcol=5
+
+##parameters for sleuth, unhide if needed
+##genecol=2
+##foldcol=5 ##"b"
+##pvalcol=4
+
+##remove NA pval (DEseq2 independent filtering)
+awk -F "," <$1 '($'$pvalcol' ~ !/NA/) {print}' >/tmp/out
+
+##sorting by foldchange, can also be done with pval, or combination
+awk -F "," </tmp/out '{print $'$genecol' "\t" $'$foldcol'}' >/tmp/out2
+sort -k2 -n /tmp/out2 >output.rnk
