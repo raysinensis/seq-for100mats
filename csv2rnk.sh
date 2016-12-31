@@ -38,4 +38,5 @@ awk -F "," <$1 '($'$pvalcol' ~ !/NA/) {print}' >/tmp/out
 
 ##sorting by foldchange, can also be done with pval, or combination
 awk -F "," </tmp/out '{print $'$genecol' "\t" $'$foldcol'}' >/tmp/out2
-sort -k2 -n /tmp/out2 >output.rnk
+sort -k2 -n /tmp/out2 > /tmp/out
+awk -F "\"" </tmp/out '{print $2 $3}' >output.rnk
