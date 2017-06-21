@@ -1,4 +1,5 @@
 #!/bin/bash
+#must run as: bash GTF_filter.sh to use list function
 #simple couple lines using awk to filter GTF files to exclude or include genes/types of interest
 
 ##########################
@@ -15,13 +16,14 @@ usage() {
   echo "      arg2=include/exclude, or list/delist/append (provided in arg3)"
   echo "      arg3=keyword, can be part of feature name or type"
   echo "      arg4=output name"
+  echo "      arg5=tmp folder (optional)"
   echo ""
   exit 2
 }
 
 START=$(date +%s)
 ##checking for correct arguments
-  if [ "$#" != "4" ]
+  if [ "$#" != "4" ] && [ "$#" != "5" ]
   then
 	usage
 	exit 1
@@ -32,6 +34,10 @@ START=$(date +%s)
   	 output=$4
   	 io=$2
   	 word=$3
+	 tmpfolder="/tmp/log"
+	 if [ "$#" = "5" ]
+	 then tmpfolder=$5
+	 fi
 
 ##for list formats that are not plain text
 ##for CSV tab-deliminated
@@ -45,6 +51,16 @@ START=$(date +%s)
   counter=1
   echo $count "genes..."
   fi
+  if [ $format = "txt" ]
+  then echo "coverting txt..."
+  awk <$3 -F "\n" '{print $1}' > /tmp/csv
+  word=/tmp/csv
+  count=$(wc -l < /tmp/csv)
+  counter=1
+  echo $count "genes..."
+  fi
+
+
 
 ##simple filtering using awk
 ##to include entries containing keyword given
@@ -75,8 +91,14 @@ START=$(date +%s)
 		while [ "$counter" -le "$count" ]
 		do
 			word=$(awk 'FNR=='"$counter"' {print}' /tmp/csv)
+			last=${word#${word%?}}
+			if [[ $last =~ [^a-zA-Z0-9]$ ]]
+			then
+				word=${word%?}
+			fi
+			echo -n "$word   "
   			counter=$((counter+1))
-			awk <$1 '/'\""$word"\"'/ {print}' >> $4
+			awk <$input '/'\""$word"\"'/ {print}' >> $output
 		done
 	fi
 
@@ -87,9 +109,9 @@ START=$(date +%s)
                 {for (entry in list)
                 if ($0 ~ entry) 
 		$mark="\"true\""}
-                {print}' $word $1 > /tmp/log
+                {print}' $word $1 > $5
 	echo "outputting..."
-	awk -F, < /tmp/log '!/"true"/ {print}' > $4
+	awk -F, < $5 '!/"true"/ {print}' > $4
 
 ##append list to gtf, can be combined with include function to move entries between gtf files
 ##depending on downstream application, may require additional step: bedtools sort -i in.gtf > out.gtf
